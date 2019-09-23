@@ -1,39 +1,241 @@
 <!doctype html>
 <html>
-  <head>
-    <title>Socket.IO chat</title>
-    <style>
-      * { margin: 0; padding: 0; box-sizing: border-box; }
-      body { font: 13px Helvetica, Arial; }
-      form { background: #000; padding: 3px; position: fixed; bottom: 0; width: 100%; }
-      form input { border: 0; padding: 10px; width: 90%; margin-right: .5%; }
-      form button { width: 9%; background: rgb(130, 224, 255); border: none; padding: 10px; }
-      #messages { list-style-type: none; margin: 0; padding: 0; }
-      #messages li { padding: 5px 10px; }
-      #messages li:nth-child(odd) { background: #eee; }
-      #messages { margin-bottom: 40px }
-    </style>
-  </head>
-  <body>
-    <ul id="messages"></ul>
-    <form action="">
-      <input id="m" autocomplete="off" /><button>Send</button>
-    </form>
-    <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
-    <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
-    <script>
-      $(function () {
-        var socket = io();
-        $('form').submit(function(){
-          socket.emit('chat message', $('#m').val());
-          $('#m').val('');
-          return false;
-        });
-        socket.on('chat message', function(msg){
-          $('#messages').append($('<li>').text(msg));
-          window.scrollTo(0, document.body.scrollHeight);
-        });
+
+<head>
+  <title>Socket.IO chat</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font: 15px;
+      font-family: "Comic Sans MS", cursive, sans-serif;
+      margin: 4em;
+    }
+
+    form {
+      background: #000;
+      padding: 3px;
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+    }
+
+    form input {
+      border: 0;
+      padding: 10px;
+      width: 90%;
+      margin-right: .5%;
+    }
+
+    form button {
+      width: 9%;
+      background: rgb(130, 224, 255);
+      border: none;
+      padding: 10px;
+    }
+
+    #messages {
+      list-style-type: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    #messages li {
+      padding: 10px 10px;
+    }
+
+    #messages li:nth-child(odd) {
+      background: #eee;
+    }
+
+    #messages {
+      margin-bottom: 40px
+    }
+
+    #title {
+      padding-top: 15px;
+      font-size: 30px;
+      font-family: "Comic Sans MS", cursive, sans-serif;
+    }
+
+    #chatbox {
+      border-radius: 5px;
+      box-shadow: 10px 10px 15px grey;
+      padding: 20px;
+      background-color: #66b3ff
+    }
+
+    #change_username,
+    #friends {
+      border-radius: 5px;
+      box-shadow: 10px 10px 15px grey;
+      padding: 20px;
+      background-color: #66b3ff;
+      margin-left: 10px;
+    }
+
+    #logo {
+      width: 120px;
+      height: auto;
+      float: left;
+    }
+
+    #login {
+      width: 30%;
+      margin-left: 35%;
+    }
+
+    .right {
+      text-align: right;
+    }
+
+    .left {
+      text-align: left;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="form-group" id="login">
+    <label for="usernamei">Username</label>
+    <input type="email" class="form-control" id="usernamei" aria-describedby="emailHelp" placeholder="username"><br>
+    <button id="btnSet" class="btn btn-secondary btn-block">Set</button>
+  </div>
+
+  <div id="main">
+    <div>
+      <img id="logo"
+        src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRGBhhgp1hqlTPuajEa1ySfmzG5Zw08t22NG-2rPKcUCcde3kRLLA">
+      <h1 id="title">ChatTalk</h1>
+
+    </div>
+    <hr><br>
+    <div id="container">
+      <div class="row">
+        <div class="col-sm-0">
+
+        </div>
+        <div id="chatbox" class="col-sm-9">
+
+          <section id="messages"></section>
+          <section id="feedback"></section>
+          <hr>
+          <input class="form-control" id="m" type="text" placeholder="Type message here" /> <br>
+          <!-- <button id="btnEnd" type="button" class="btn btn-secondary">End</button> -->
+          <button id="btnMessage" type="button" class="btn btn-secondary">Send</button>
+        </div>
+        <div id="kilid" class="col-sm-3">
+          <center>
+            <section id="feedback"></section>
+            <br>
+            <div id="friends">
+              <h2>Chat: </h2>
+              <center>
+                <p id="owner"></p>
+              </center>
+              <hr>
+              <section id="pre"></section>
+            </div>
+          </center>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>
+
+<script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
+<script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@8"></script>
+
+
+<script type="text/javascript">
+  $(document).ready(function () {
+    $("#main").hide()
+  })
+  $(function () {
+    var socket = io();
+    var message = $("#m")
+    var usernamei = $("#usernamei")
+    var btnMessage = $("#btnMessage")
+    var messagebox = $("#messages")
+    var feedback = $("#feedback")
+    var prend = $("#pre")
+    var btnSet = $("#btnSet")
+    // var endBtn = $("#btnEnd")
+
+    //creating message
+    btnMessage.click(function (e) {
+      e.preventDefault();
+      socket.emit('new_message', {
+        message: message.val()
       });
-    </script>
-  </body>
+      messagebox.append("<p class='message right'>" + message.val() + " :" + $("#usernamei").val() + "</p>")
+    });
+
+    //appending a new_message
+    socket.on("new_message", (data) => {
+      feedback.html('');
+      message.val('');
+      if (data.username != $("#usernamei").val()) {
+        messagebox.append("<p class='message left'>" + data.username + ": " + data.message + "</p>")
+      }
+    });
+
+    //default username
+    // socket.on("online_user", (user) => {
+    //   prend.append("<p class='message'>" + user.username + " is online" + "</p>")
+    // });
+    var mylist = []
+    //changing a username
+    btnSet.click(function (data) {
+      socket.emit('change_username', {
+        username: usernamei.val()
+      });
+      $("#owner").text(usernamei.val())
+      mylist.push(usernamei.val())
+      $("#login").hide()
+      $("#main").show()
+    });
+
+    //user online
+    socket.on("change_username", (user) => {
+      socket.username = 'Anonymous'
+      for (let i = 0; i < user.users.length; ++i) {
+        if (!mylist.includes(user.users[i])) {
+          mylist.push(user.users[i])
+          prend.append($("<p>", { class: 'message' }).text(user.users[i] + " is online"))
+        }
+      }
+
+    });
+    //Emit typing
+    message.bind("keypress", () => {
+      socket.emit('typing')
+    });
+
+    //typing
+    socket.on('typing', (data) => {
+      feedback.html("<p><i>" + data.username + " is typing..." + "</i></p>")
+    });
+
+    // endBtn.click(function(e){
+    //   socket.emit('disconnected')
+    //   e.preventDefault();
+
+    // })
+  });
+</script>
+</body>
+
 </html>
