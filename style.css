@@ -1,0 +1,119 @@
+ * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    #logo {
+        width: 100px;
+        height: auto;
+        float: left;
+      }
+      
+      #logo1 {
+          width: 100px;
+          height: auto;
+          margin-left: 470px;
+        }
+  
+      #login {
+        border-radius: 5px;
+        box-shadow: 10px 10px 15px grey;
+        padding: 20px;
+        background-color: #66b3ff;
+        width: 35%;
+        margin-left: 35%;
+        margin-top: 15%;
+      }
+
+      #we{
+          color: #3499ba;
+      }
+      #chat{
+          color: aquamarine;
+      }
+
+    body {
+        background-image: url("https://www.forfirm.com/wp-content/uploads/2019/07/corsiforfirmimmagine.jpg");
+        background-repeat: no-repeat;
+        background-size: cover;
+        color: #3499ba;
+        font-size:40px;
+        font-family: "Comic Sans MS", cursive, sans-serif;
+        margin: 4em;
+    }
+
+    form {
+      background: #000;
+      padding: 3px;
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+    }
+
+    form input {
+      border: 0;
+      padding: 10px;
+      width: 90%;
+      margin-right: .5%;
+    }
+
+    form button {
+      width: 9%;
+      background: rgb(130, 224, 255);
+      border: none;
+      padding: 10px;
+    }
+
+    #messages {
+      list-style-type: none;
+      margin: 0;
+      font-size: 20px;
+      padding: 0;
+    }
+
+    #messages li {
+      padding: 10px 10px;
+    }
+
+    #messages li:nth-child(odd) {
+      background: #eee;
+    }
+
+    #messages {
+      margin-bottom: 40px
+    }
+
+    #title {
+      padding-top: 15px;
+      font-size: 40px;
+      font-family: "Comic Sans MS", cursive, sans-serif;
+    }
+
+    #chatbox {
+      border-radius: 5px;
+      box-shadow: 10px 10px 15px grey;
+      padding: 20px;
+      background-color: #66b3ff
+    }
+
+    #change_username,
+    #friends {
+      border-radius: 5px;
+      box-shadow: 10px 10px 15px grey;
+      padding: 20px;
+      font-size: 15px;
+      background-color: #66b3ff;
+      margin-left: 10px;
+    }
+
+   
+
+    .right {
+      text-align: right;
+    }
+
+    .left {
+      text-align: left;
+    }
+    

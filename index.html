@@ -2,147 +2,40 @@
 <html>
 
 <head>
-  <title>Socket.IO chat</title>
+  <title>WeChat</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+  <link rel="stylesheet" href="style.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
 
-    body {
-      font: 15px;
-      font-family: "Comic Sans MS", cursive, sans-serif;
-      margin: 4em;
-    }
-
-    form {
-      background: #000;
-      padding: 3px;
-      position: fixed;
-      bottom: 0;
-      width: 100%;
-    }
-
-    form input {
-      border: 0;
-      padding: 10px;
-      width: 90%;
-      margin-right: .5%;
-    }
-
-    form button {
-      width: 9%;
-      background: rgb(130, 224, 255);
-      border: none;
-      padding: 10px;
-    }
-
-    #messages {
-      list-style-type: none;
-      margin: 0;
-      padding: 0;
-    }
-
-    #messages li {
-      padding: 10px 10px;
-    }
-
-    #messages li:nth-child(odd) {
-      background: #eee;
-    }
-
-    #messages {
-      margin-bottom: 40px
-    }
-
-    #title {
-      padding-top: 15px;
-      font-size: 30px;
-      font-family: "Comic Sans MS", cursive, sans-serif;
-    }
-
-    #chatbox {
-      border-radius: 5px;
-      box-shadow: 10px 10px 15px grey;
-      padding: 20px;
-      background-color: #66b3ff
-    }
-
-    #change_username,
-    #friends {
-      border-radius: 5px;
-      box-shadow: 10px 10px 15px grey;
-      padding: 20px;
-      background-color: #66b3ff;
-      margin-left: 10px;
-    }
-
-    #logo {
-      width: 120px;
-      height: auto;
-      float: left;
-    }
-
-    #login {
-      border-radius: 5px;
-      box-shadow: 10px 10px 15px grey;
-      padding: 20px;
-      background-color: #66b3ff;
-      width: 35%;
-      margin-left: 35%;
-      margin-top: 15%;
-    }
-
-    .right {
-      text-align: right;
-    }
-
-    .left {
-      text-align: left;
-    }
-  </style>
 </head>
 
 <body>
-  <div class="form-group" id="login">
-    <center><label for="usernamei">Username</label></center>
-    <input type="email" class="form-control" id="usernamei" aria-describedby="emailHelp" placeholder="username"><br>
-    <button id="btnSet" class="btn btn-secondary btn-block">Set</button>
+  <div class="form-group" id="setUser">
+      <img id="logo1" src="chat.png">
+    <center><label id="we" for="usersname">We</label></center>
+    <center><label id="chat" for="usersname">Chat</label></center>
+    <input type="email" class="form-control" id="usersname" aria-describedby="emailHelp"
+      placeholder="Enter Username..."><br>
+    <button id="btnSet" class="btn btn-secondary btn-block">Join</button>
   </div>
 
   <div id="main">
-    <div>
-      <img id="logo"
-        src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRGBhhgp1hqlTPuajEa1ySfmzG5Zw08t22NG-2rPKcUCcde3kRLLA">
-      <h1 id="title">ChatTalk</h1>
-
+    <div id="myHeader" class="sticky">
+      <img id="logo" src="chat.png">
+      <h1 id="title">WeChat</h1>
     </div>
     <hr><br>
     <div id="container">
       <div class="row">
-        <div class="col-sm-0">
-
-        </div>
-        <div id="chatbox" class="col-sm-9">
-
-          <section id="messages"></section>
-          <section id="feedback"></section>
-          <hr>
-          <input class="form-control" id="m" type="text" placeholder="Type message here" /> <br>
-          <!-- <button id="btnEnd" type="button" class="btn btn-secondary">End</button> -->
-          <button id="btnMessage" type="button" class="btn btn-secondary">Send</button>
-        </div>
+        <div class="col-sm-0"></div>
         <div id="kilid" class="col-sm-3">
           <center>
             <section id="feedback"></section>
             <div id="friends">
-              <h2>Active Friends: </h2>
+              <h2 id="activeFrnds">Active Friends: </h2>
               <center>
                 <p id="owner"></p>
               </center>
@@ -151,6 +44,15 @@
             </div>
           </center>
         </div>
+        <div id="chatbox" class="col-sm-9">
+
+          <section id="messages"></section>
+          <section id="feedback"></section>
+          <hr>
+          <input class="form-control" id="m" type="text" placeholder="Type message here" /> <br>
+          <button id="btnMessage" type="button" class="btn btn-secondary">Send</button>
+        </div>
+
       </div>
     </div>
   </div>
@@ -170,7 +72,7 @@
   $(function () {
     var socket = io();
     var message = $("#m")
-    var usernamei = $("#usernamei")
+    var usersname = $("#usersname")
     var btnMessage = $("#btnMessage")
     var messagebox = $("#messages")
     var feedback = $("#feedback")
@@ -184,37 +86,32 @@
       socket.emit('new_message', {
         message: message.val()
       });
-      messagebox.append("<p class='message right'>" + message.val() + " :" + $("#usernamei").val() + "</p>")
+      messagebox.append("<p class='message right'>" + $("#usersname").val()+ " :" + message.val() + "</p>")
     });
 
     //appending a new_message
     socket.on("new_message", (data) => {
       feedback.html('');
       message.val('');
-      if (data.username != $("#usernamei").val()) {
+      if (data.username != $("#usersname").val()) {
         messagebox.append("<p class='message left'>" + data.username + ": " + data.message + "</p>")
       }
     });
 
-    //default username
-    // socket.on("online_user", (user) => {
-    //   prend.append("<p class='message'>" + user.username + " is online" + "</p>")
-    // });
     var mylist = []
     //changing a username
     btnSet.click(function (data) {
       socket.emit('change_username', {
-        username: usernamei.val()
+        username: usersname.val()
       });
-      $("#owner").text(usernamei.val())
-      mylist.push(usernamei.val())
-      $("#login").hide()
+      $("#owner").text(usersname.val())
+      mylist.push(usersname.val())
+      $("#setUser").hide()
       $("#main").show()
     });
 
     //user online
     socket.on("change_username", (user) => {
-      socket.username = 'Anonymous'
       for (let i = 0; i < user.users.length; ++i) {
         if (!mylist.includes(user.users[i])) {
           mylist.push(user.users[i])
@@ -232,12 +129,6 @@
     socket.on('typing', (data) => {
       feedback.html("<p><i>" + data.username + " is typing..." + "</i></p>")
     });
-
-    // endBtn.click(function(e){
-    //   socket.emit('disconnected')
-    //   e.preventDefault();
-
-    // })
   });
 </script>
 </body>
